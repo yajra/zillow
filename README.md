@@ -4,6 +4,10 @@ Zillow, Laravel Wrapper
 A simple Laravel Wrapper for the Zillow API services.
 
 [![Build Status](https://travis-ci.org/yajra/zillow.png?branch=master)](https://travis-ci.org/yajra/zillow)
+[![Total Downloads](https://poser.pugx.org/yajra/zillow/downloads.png)](https://packagist.org/packages/yajra/zillow)
+[![Latest Stable Version](https://poser.pugx.org/yajra/zillow/v/stable.png)](https://packagist.org/packages/yajra/zillow)
+[![Latest Unstable Version](https://poser.pugx.org/yajra/zillow/v/unstable.svg)](https://packagist.org/packages/yajra/zillow)
+[![License](https://poser.pugx.org/yajra/zillow/license.svg)](https://packagist.org/packages/yajra/zillow)
 
 
 Requirements
@@ -52,8 +56,12 @@ Usage
 Make requests with a specific API call method:
 
 ```php
-    // Run GetSearchResults
-    $response = Zillow::getSearchResults(['address' => '5400 Tujunga Ave', 'citystatezip' => 'North Hollywood, CA 91601']);
+$params = [
+	'address' => '5400 Tujunga Ave',
+	'citystatezip' => 'North Hollywood, CA 91601'
+];
+// Run GetSearchResults
+$response = Zillow::getSearchResults($params);
 ```
 
 Any Zillow API call will work. Valid callbacks are:
