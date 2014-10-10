@@ -49,7 +49,7 @@ Lastly, publish the config file:
 ```php
 $ php artisan config:publish yajra/zillow
 ```
-Then edit `zws-id` value in `app/config/packages/yajra/zillow/config.php`
+Then set your [Zillow Web Services ID (ZWSID)](http://www.zillow.com/webservice/Registration.htm) by updating the `zws-id` value in `app/config/packages/yajra/zillow/config.php`
 
 Usage
 -----
