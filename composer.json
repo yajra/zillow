@@ -1,7 +1,7 @@
 {
     "name": "yajra/zillow",
     "type": "application",
-    "description": "Zillow Laravel API Wrapper",
+    "description": "Laravel Wrapper for Zillow API",
     "keywords": ["laravel", "zillow", "php", "api"],
     "homepage": "https://github.com/yajra/zillow",
     "license": "MIT",
