@@ -20,7 +20,7 @@ class ServiceProvider extends IlluminateServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('yajra/zillow', 'zillow', __DIR__.'/../');
+		$this->package('yajra/zillow');
 	}
 
 	/**
