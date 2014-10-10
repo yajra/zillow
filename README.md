@@ -17,7 +17,7 @@ Installation
 Add `yajra/zillow` as a require dependency in your `composer.json` file:
 
 ```php
-php composer.phar require yajra/zillow: *
+php composer.phar require yajra/zillow:~1.0
 ```
 
 Configuration
