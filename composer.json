@@ -1,0 +1,31 @@
+{
+    "name": "yajra/zillow",
+    "type": "application",
+    "description": "Zillow PHP API Wrapper",
+    "keywords": ["laravel", "zillow", "php", "api"],
+    "homepage": "https://github.com/yajra/zillow",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arjay Angeles",
+            "email": "aqangeles@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/yajra/zillow/issues"
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "4.*",
+        "fabpot/goutte": "~2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "yajra\\Zillow": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
