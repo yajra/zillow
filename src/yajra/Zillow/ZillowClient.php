@@ -3,30 +3,30 @@
 use GuzzleHttp\Client as GuzzleClient;
 use Goutte\Client as GoutteClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
-use Zillow\ZillowException;
+use yajra\Zillow\ZillowException;
 
 /**
  * Client
  *
  * @author Arjay Angeles <aqangeles@gmail.com>
  */
-class ZillowClient {
-
+class ZillowClient
+{
     /**
      * @var zillow api endpoint
      */
     const END_POINT = 'http://www.zillow.com/webservice/';
-	/**
-	 * @var object GuzzleClient
-	 */
-	protected $client;
+    /**
+     * @var object GuzzleClient
+     */
+    protected $client;
 
-	/**
-	 * @var string ZWSID
-	 */
-	protected $ZWSID;
+    /**
+     * @var string ZWSID
+     */
+    protected $ZWSID;
 
-	/**
+    /**
      * @var int
      */
     protected $errorCode = 0;
@@ -91,8 +91,8 @@ class ZillowClient {
         $this->setZWSID($ZWSID);
     }
 
-	/**
-	 * Set client
+    /**
+     * Set client
      * return GuzzleClient
      */
     public function setClient(GuzzleClientInterface $client)
@@ -108,8 +108,7 @@ class ZillowClient {
      */
     public function getClient()
     {
-        if (!$this->client)
-        {
+        if (!$this->client) {
             $this->client = new GuzzleClient(array('defaults' => array('allow_redirects' => false, 'cookies' => true)));
         }
 
@@ -121,7 +120,7 @@ class ZillowClient {
      */
     public function setZWSID($id)
     {
-    	return ($this->ZWSID = $id);
+        return ($this->ZWSID = $id);
     }
 
     /**
@@ -129,7 +128,7 @@ class ZillowClient {
      */
     public function getZWSID()
     {
-    	return $this->ZWSID;
+        return $this->ZWSID;
     }
 
     /**
@@ -138,7 +137,7 @@ class ZillowClient {
      */
     public function isSuccessful()
     {
-    	return (bool) ((int) $this->errorCode === 0);
+        return (bool) ((int) $this->errorCode === 0);
     }
 
     /**
@@ -147,7 +146,7 @@ class ZillowClient {
      */
     public function getStatusCode()
     {
-    	return $this->errorCode;
+        return $this->errorCode;
     }
 
     /**
@@ -156,7 +155,7 @@ class ZillowClient {
      */
     public function getStatusMessage()
     {
-    	return $this->errorMessage;
+        return $this->errorMessage;
     }
 
     /**
@@ -186,8 +185,7 @@ class ZillowClient {
      */
     public function __call($name, $arguments)
     {
-        if (in_array($name, self::$validCallbacks))
-        {
+        if (in_array($name, self::$validCallbacks)) {
             return $this->doRequest($name, $arguments);
         }
     }
@@ -199,14 +197,14 @@ class ZillowClient {
      * @param string $uri
      * @return array
      */
-    public function getPhotos($uri) {
+    public function getPhotos($uri)
+    {
         $this->photos = [];
-        $client = new GoutteClient;
-        $crawler = $client->request('GET', $uri);
+        $client       = new GoutteClient;
+        $crawler      = $client->request('GET', $uri);
 
         // Get the latest post in this category and display the titles
-        $crawler->filter('.photos a')->each(function ($node)
-        {
+        $crawler->filter('.photos a')->each(function ($node) {
             $this->photos[] = $node->filter('img')->attr('src') ?: $node->filter('img')->attr('href');
         });
 
@@ -224,17 +222,15 @@ class ZillowClient {
      * @param int @zpid
      * @return array
      */
-    public function getPhotosById($zpid) {
+    public function getPhotosById($zpid)
+    {
         // We call the GetZestimate first to get the link to the home page details
         $response = $this->GetZestimate(['zpid' => $zpid]);
 
         $this->photos = [];
-        if ($this->isSuccessful() && isset($response['links']['homedetails']) && $response['links']['homedetails'])
-        {
+        if ($this->isSuccessful() && isset($response['links']['homedetails']) && $response['links']['homedetails']) {
             return $this->GetPhotos($response['links']['homedetails']);
-        }
-        else
-        {
+        } else {
             $this->setStatus(999, 'COULD NOT GET PHOTOS');
         }
 
@@ -249,7 +245,7 @@ class ZillowClient {
      */
     protected function setStatus($code, $message)
     {
-        $this->errorCode = $code;
+        $this->errorCode    = $code;
         $this->errorMessage = $message;
     }
 
@@ -259,15 +255,15 @@ class ZillowClient {
      * @param array $params
      * @return array
      */
-    protected function doRequest($call, array $params) {
-    	// Validate
-    	if (!$this->getZWSID())
-        {
-    		throw new ZillowException("You must submit the ZWSID");
-    	}
+    protected function doRequest($call, array $params)
+    {
+        // Validate
+        if (!$this->getZWSID()) {
+            throw new ZillowException("You must submit the ZWSID");
+        }
 
-    	// Run the call
-    	$response = $this->getClient()->get(self::END_POINT.ucfirst($call).'.htm', ['query' => ['zws-id' => $this->getZWSID()] + $params]);
+        // Run the call
+        $response = $this->getClient()->get(self::END_POINT.ucfirst($call).'.htm', ['query' => ['zws-id' => $this->getZWSID()] + $params]);
 
         $this->response = $response->xml();
 
@@ -286,8 +282,7 @@ class ZillowClient {
         // Init
         $this->response = json_decode(json_encode($response), true);
 
-        if (!$this->response['message'])
-        {
+        if (!$this->response['message']) {
             $this->setStatus(999, 'XML WAS NOT FOUND');
             return;
         }
@@ -296,12 +291,9 @@ class ZillowClient {
         $this->setStatus($this->response['message']['code'], $this->response['message']['text']);
 
         // If request was succesful then parse the result
-        if ($this->isSuccessful())
-        {
-            if ($this->response['response'] && isset($this->response['response']['results']) && count($this->response['response']['results']))
-            {
-                foreach($this->response['response']['results'] as $result)
-                {
+        if ($this->isSuccessful()) {
+            if ($this->response['response'] && isset($this->response['response']['results']) && count($this->response['response']['results'])) {
+                foreach ($this->response['response']['results'] as $result) {
                     $this->results[$result['zpid']] = $result;
                 }
             }
@@ -309,5 +301,4 @@ class ZillowClient {
 
         return isset($this->response['response']) ? $this->response['response'] : $this->response;
     }
-
 }
