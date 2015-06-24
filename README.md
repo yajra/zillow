@@ -20,8 +20,13 @@ Installation
 
 Add `yajra/zillow` as a require dependency in your `composer.json` file:
 
+**Laravel 4**
 ```php
-php composer.phar require yajra/zillow:~1.0
+composer require yajra/zillow:~1.0
+```
+**Laravel 5**
+```php
+composer require yajra/zillow:~2.0
 ```
 
 Configuration
@@ -46,12 +51,25 @@ At the end of `config/app.php` add `Zillow` => `yajra\Zillow\Facade` to the alia
 ```
 
 Lastly, publish the config file:
+
+**Laravel 4**
 ```php
 $ php artisan config:publish yajra/zillow
 ```
-Then set your [Zillow Web Services ID (ZWSID)](http://www.zillow.com/webservice/Registration.htm) by updating the `zws-id` value in `app/config/packages/yajra/zillow/config.php`
+**Laravel 5**
+```php
+$ php artisan vendor:publish
+```
 
-Usage
+Then set your [Zillow Web Services ID (ZWSID)](http://www.zillow.com/webservice/Registration.htm) by updating the `zws-id` value in
+
+**Laravel 4**
+`app/config/packages/yajra/zillow/config.php`
+
+**Laravel 5**
+`config/zillow.php`
+
+###Usage
 -----
 Make requests with a specific API call method:
 
