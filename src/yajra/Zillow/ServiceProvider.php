@@ -36,7 +36,7 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register()
     {
         $this->app->bind('zillow', function ($app) {
-            return new ZillowClient(Config::get('zillow::zws-id'));
+            return new ZillowClient(config('zillow.zws-id'));
         });
     }
 
