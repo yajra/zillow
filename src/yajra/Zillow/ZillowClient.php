@@ -294,11 +294,11 @@ class ZillowClient
         if ($this->isSuccessful()) {
             if ($this->response['response'] && isset($this->response['response']['results']) && count($this->response['response']['results'])) {
                 foreach ($this->response['response']['results'] as $result) {
-                    $this->results[$result['zpid']] = $result;
+                    $this->results[] = $result;
                 }
             }
         }
 
-        return isset($this->response['response']) ? $this->response['response'] : $this->response;
+        return isset($this->response['response']) ? $this->results : $this->response;
     }
 }
