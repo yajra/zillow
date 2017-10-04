@@ -1,5 +1,9 @@
 # CHANGELOG
 
+# v2.0.5 - (10-04-2017)
+- Allow redirects.
+- Fix Unable to parse response body into XML: String could not be parsed as XML.
+
 # v2.0.4 - (10-03-2017)
 - Return actual results. [#2]
 - Fix issue handling multiple results.
