@@ -2,7 +2,6 @@
 
 namespace Yajra\Zillow;
 
-use Config;
 use Illuminate\Support\ServiceProvider;
 
 class ZillowServiceProvider extends ServiceProvider
@@ -33,7 +32,7 @@ class ZillowServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('zillow', function ($app) {
+        $this->app->bind('zillow', function () {
             return new ZillowClient(config('zillow.zws-id'));
         });
     }
