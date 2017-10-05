@@ -43,7 +43,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Yajra\\Zillow": "src/"
+      "Yajra\\Zillow\\": "src/"
     }
   },
   "minimum-stability": "stable"
