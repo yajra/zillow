@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-0": {
-            "yajra\\Zillow": "src/"
+            "Yajra\\Zillow": "src/"
         }
     },
     "minimum-stability": "stable"

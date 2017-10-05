@@ -1,9 +1,8 @@
-<?php namespace yajra\Zillow;
+<?php namespace Yajra\Zillow;
 
-use GuzzleHttp\Client as GuzzleClient;
 use Goutte\Client as GoutteClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
-use yajra\Zillow\ZillowException;
 
 /**
  * Client
@@ -16,6 +15,37 @@ class ZillowClient
      * @var zillow api endpoint
      */
     const END_POINT = 'http://www.zillow.com/webservice/';
+
+    /**
+     * @var array - valid callbacks
+     */
+    public static $validCallbacks = [
+        'getZestimate',
+        'getSearchResults',
+        'getChart',
+        'getComps',
+        'getDeepComps',
+        'getDeepSearchResults',
+        'getUpdatedPropertyDetails',
+        'getDemographics',
+        'getRegionChildren',
+        'getRegionChart',
+        'getRateSummary',
+        'getMonthlyPayments',
+        'calculateMonthlyPaymentsAdvanced',
+        'calculateAffordability',
+        'calculateRefinance',
+        'calculateAdjustableMortgage',
+        'calculateMortgageTerms',
+        'calculateDiscountPoints',
+        'calculateBiWeeklyPayment',
+        'calculateNoCostVsTraditional',
+        'calculateTaxSavings',
+        'calculateFixedVsAdjustableRate',
+        'calculateInterstOnlyVsTraditional',
+        'calculateHELOC',
+    ];
+
     /**
      * @var object GuzzleClient
      */
@@ -52,43 +82,123 @@ class ZillowClient
     protected $photos = [];
 
     /**
-     * @var array - valid callbacks
-     */
-    public static $validCallbacks = [
-        'getZestimate',
-        'getSearchResults',
-        'getChart',
-        'getComps',
-        'getDeepComps',
-        'getDeepSearchResults',
-        'getUpdatedPropertyDetails',
-        'getDemographics',
-        'getRegionChildren',
-        'getRegionChart',
-        'getRateSummary',
-        'getMonthlyPayments',
-        'calculateMonthlyPaymentsAdvanced',
-        'calculateAffordability',
-        'calculateRefinance',
-        'calculateAdjustableMortgage',
-        'calculateMortgageTerms',
-        'calculateDiscountPoints',
-        'calculateBiWeeklyPayment',
-        'calculateNoCostVsTraditional',
-        'calculateTaxSavings',
-        'calculateFixedVsAdjustableRate',
-        'calculateInterstOnlyVsTraditional',
-        'calculateHELOC',
-    ];
-
-    /**
      * Initiate the class
+     *
      * @param string $ZWSID
      * @return object
      */
     public function __construct($ZWSID)
     {
         $this->setZWSID($ZWSID);
+    }
+
+    /**
+     * return the status code from the last call
+     *
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->errorCode;
+    }
+
+    /**
+     * return the status message from the last call
+     *
+     * @return string
+     */
+    public function getStatusMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * return the actual response array from the last call
+     *
+     * @return array
+     */
+    public function getResponse()
+    {
+        return isset($this->response['response']) ? $this->response['response'] : $this->response;
+    }
+
+    /**
+     * return the results array from the GetSearchResults call
+     *
+     * @return array
+     */
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    /**
+     * magic method to invoke the correct API call
+     * if the passed name is within the valid callbacks
+     *
+     * @param string $name
+     * @param array  $arguments
+     * @return array
+     */
+    public function __call($name, $arguments)
+    {
+        if (in_array($name, self::$validCallbacks)) {
+            return $this->doRequest($name, $arguments);
+        }
+    }
+
+    /**
+     * Perform the actual request to the zillow api endpoint
+     *
+     * @param string $name
+     * @param array  $params
+     * @return array
+     */
+    protected function doRequest($call, array $params)
+    {
+        // Validate
+        if (! $this->getZWSID()) {
+            throw new ZillowException("You must submit the ZWSID");
+        }
+
+        // Run the call
+        $response = $this->getClient()
+                         ->get(self::END_POINT . ucfirst($call) . '.htm',
+                             ['query' => ['zws-id' => $this->getZWSID()] + $params]);
+
+        $this->response = $response->xml();
+
+        // Parse response
+        return $this->parseResponse($this->response);
+    }
+
+    /**
+     * @return string ZWSID
+     */
+    public function getZWSID()
+    {
+        return $this->ZWSID;
+    }
+
+    /**
+     * @return string ZWSID
+     */
+    public function setZWSID($id)
+    {
+        return ($this->ZWSID = $id);
+    }
+
+    /**
+     * get GuzzleClient, create if it's null
+     * return GuzzleClient
+     */
+    public function getClient()
+    {
+        if (! $this->client) {
+            $this->client = new GuzzleClient(['defaults' => ['allow_redirects' => true, 'cookies' => true]]);
+        }
+
+        return $this->client;
     }
 
     /**
@@ -103,36 +213,54 @@ class ZillowClient
     }
 
     /**
-     * get GuzzleClient, create if it's null
-     * return GuzzleClient
+     * Parse the reponse into a formatted array
+     * also set the status code and status message
+     *
+     * @param object $response
+     * @return array
      */
-    public function getClient()
+    protected function parseResponse($response)
     {
-        if (!$this->client) {
-            $this->client = new GuzzleClient(array('defaults' => array('allow_redirects' => true, 'cookies' => true)));
+        // Init
+        $this->response = json_decode(json_encode($response), true);
+
+        if (! $this->response['message']) {
+            $this->setStatus(999, 'XML WAS NOT FOUND');
+
+            return;
         }
 
-        return $this->client;
+        // Check if we have an error
+        $this->setStatus($this->response['message']['code'], $this->response['message']['text']);
+
+        // If request was succesful then parse the result
+        if ($this->isSuccessful()) {
+            if ($this->response['response'] && isset($this->response['response']['results']) && count($this->response['response']['results'])) {
+                foreach ($this->response['response']['results'] as $result) {
+                    $this->results[] = $result;
+                }
+            }
+        }
+
+        return isset($this->response['response']) ? $this->results : $this->response;
     }
 
     /**
-     * @return string ZWSID
+     * set the statis code and message of the api call
+     *
+     * @param int    $code
+     * @param string $message
+     * @return void
      */
-    public function setZWSID($id)
+    protected function setStatus($code, $message)
     {
-        return ($this->ZWSID = $id);
-    }
-
-    /**
-     * @return string ZWSID
-     */
-    public function getZWSID()
-    {
-        return $this->ZWSID;
+        $this->errorCode    = $code;
+        $this->errorMessage = $message;
     }
 
     /**
      * Check if the last request was successful
+     *
      * @return bool
      */
     public function isSuccessful()
@@ -141,83 +269,11 @@ class ZillowClient
     }
 
     /**
-     * return the status code from the last call
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return $this->errorCode;
-    }
-
-    /**
-     * return the status message from the last call
-     * @return string
-     */
-    public function getStatusMessage()
-    {
-        return $this->errorMessage;
-    }
-
-    /**
-     * return the actual response array from the last call
-     * @return array
-     */
-    public function getResponse()
-    {
-        return isset($this->response['response']) ? $this->response['response'] : $this->response;
-    }
-
-    /**
-     * return the results array from the GetSearchResults call
-     * @return array
-     */
-    public function getResults()
-    {
-        return $this->results;
-    }
-
-    /**
-     * magic method to invoke the correct API call
-     * if the passed name is within the valid callbacks
-     * @param string $name
-     * @param array $arguments
-     * @return array
-     */
-    public function __call($name, $arguments)
-    {
-        if (in_array($name, self::$validCallbacks)) {
-            return $this->doRequest($name, $arguments);
-        }
-    }
-
-    /**
-     * Since zillow does not provide the ability to grab the photos
-     * of the properties through the API this little method will scan
-     * the property url and grab all the images for that property
-     * @param string $uri
-     * @return array
-     */
-    public function getPhotos($uri)
-    {
-        $this->photos = [];
-        $client       = new GoutteClient;
-        $crawler      = $client->request('GET', $uri);
-
-        // Get the latest post in this category and display the titles
-        $crawler->filter('.photos a')->each(function ($node) {
-            $this->photos[] = $node->filter('img')->attr('src') ?: $node->filter('img')->attr('href');
-        });
-
-        $this->response = $this->photos;
-
-        return $this->response;
-    }
-
-    /**
      * see @GetPhotos
      * Works the same way but instead passing a uri
      * you can pass a zpid and it will perform a request to grab the uri
      * based on the id
+     *
      * @see GetPhotos
      * @param int @zpid
      * @return array
@@ -238,67 +294,26 @@ class ZillowClient
     }
 
     /**
-     * set the statis code and message of the api call
-     * @param int $code
-     * @param string $message
-     * @return void
-     */
-    protected function setStatus($code, $message)
-    {
-        $this->errorCode    = $code;
-        $this->errorMessage = $message;
-    }
-
-    /**
-     * Perform the actual request to the zillow api endpoint
-     * @param string $name
-     * @param array $params
+     * Since zillow does not provide the ability to grab the photos
+     * of the properties through the API this little method will scan
+     * the property url and grab all the images for that property
+     *
+     * @param string $uri
      * @return array
      */
-    protected function doRequest($call, array $params)
+    public function getPhotos($uri)
     {
-        // Validate
-        if (!$this->getZWSID()) {
-            throw new ZillowException("You must submit the ZWSID");
-        }
+        $this->photos = [];
+        $client       = new GoutteClient;
+        $crawler      = $client->request('GET', $uri);
 
-        // Run the call
-        $response = $this->getClient()->get(self::END_POINT.ucfirst($call).'.htm', ['query' => ['zws-id' => $this->getZWSID()] + $params]);
+        // Get the latest post in this category and display the titles
+        $crawler->filter('.photos a')->each(function ($node) {
+            $this->photos[] = $node->filter('img')->attr('src') ?: $node->filter('img')->attr('href');
+        });
 
-        $this->response = $response->xml();
+        $this->response = $this->photos;
 
-        // Parse response
-        return $this->parseResponse($this->response);
-    }
-
-    /**
-     * Parse the reponse into a formatted array
-     * also set the status code and status message
-     * @param object $response
-     * @return array
-     */
-    protected function parseResponse($response)
-    {
-        // Init
-        $this->response = json_decode(json_encode($response), true);
-
-        if (!$this->response['message']) {
-            $this->setStatus(999, 'XML WAS NOT FOUND');
-            return;
-        }
-
-        // Check if we have an error
-        $this->setStatus($this->response['message']['code'], $this->response['message']['text']);
-
-        // If request was succesful then parse the result
-        if ($this->isSuccessful()) {
-            if ($this->response['response'] && isset($this->response['response']['results']) && count($this->response['response']['results'])) {
-                foreach ($this->response['response']['results'] as $result) {
-                    $this->results[] = $result;
-                }
-            }
-        }
-
-        return isset($this->response['response']) ? $this->results : $this->response;
+        return $this->response;
     }
 }

@@ -31,12 +31,12 @@ composer require yajra/zillow:~2.0
 
 Configuration
 -------------
-In your `config/app.php` add `yajra\Zillow\ServiceProvider` to the end of the providers array
+In your `config/app.php` add `Yajra\Zillow\ServiceProvider` to the end of the providers array
 ```php
 'providers' => array(
     'Illuminate\Auth\AuthServiceProvider',
     ...
-    'yajra\Zillow\ServiceProvider',
+    'Yajra\Zillow\ServiceProvider',
 ),
 ```
 
@@ -46,7 +46,7 @@ At the end of `config/app.php` add `Zillow` => `yajra\Zillow\Facade` to the alia
     'App'        => 'Illuminate\Support\Facades\App',
     'Artisan'    => 'Illuminate\Support\Facades\Artisan',
     ...
-    'Zillow'    => 'yajra\Zillow\Facade',
+    'Zillow'    => 'Yajra\Zillow\Facade',
 ),
 ```
 
