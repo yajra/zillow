@@ -1,5 +1,12 @@
 # CHANGELOG
 
+# v3.0.0 - UNRELEASED
+- Change namespace from `yajra\Zillow` to `Yajra\Zillow`.
+- Add package discovery feature of Laravel 5.5.
+- Fix cs and php docs.
+- Add missing illuminate\support package.
+- Drop support for Laravel 4.x.
+
 # v2.0.5 - (10-04-2017)
 - Allow redirects.
 - Fix Unable to parse response body into XML: String could not be parsed as XML.
