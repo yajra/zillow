@@ -35,7 +35,7 @@ In your `config/app.php` add `Yajra\Zillow\ZillowServiceProvider` to the end of 
 ],
 ```
 
-At the end of `config/app.php` add `Zillow` => `yajra\Zillow\Facade` to the aliases array
+At the end of `config/app.php` add `Zillow` => `Yajra\Zillow\Facades\Zillow` to the aliases array
 ```php
 'aliases' => [
     'App'        => 'Illuminate\Support\Facades\App',
