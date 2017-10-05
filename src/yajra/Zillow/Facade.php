@@ -1,4 +1,6 @@
-<?php namespace Yajra\Zillow;
+<?php
+
+namespace Yajra\Zillow;
 
 use Illuminate\Support\Facades\Facade as IlluminateFacade;
 

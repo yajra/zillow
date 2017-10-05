@@ -1,4 +1,6 @@
-<?php namespace Yajra\Zillow;
+<?php
+
+namespace Yajra\Zillow;
 
 use Config;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
@@ -19,12 +21,9 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot()
     {
-        // Publish config files
-        $this->publishes(
-            [
-                __DIR__ . '/../config/config.php' => config_path('zillow.php'),
-            ], 'config'
-        );
+        $this->publishes([
+            __DIR__ . '/../config/config.php' => config_path('zillow.php'),
+        ], 'config');
     }
 
     /**
