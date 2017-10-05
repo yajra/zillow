@@ -6,6 +6,7 @@
 - Fix cs and php docs.
 - Add missing illuminate\support package.
 - Drop support for Laravel 4.x.
+- Use PSR-4 auto-loading.
 
 # v2.0.5 - (10-04-2017)
 - Allow redirects.
