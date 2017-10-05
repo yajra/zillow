@@ -3,9 +3,9 @@
 namespace Yajra\Zillow;
 
 use Config;
-use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class ServiceProvider extends IlluminateServiceProvider
+class ZillowServiceProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.

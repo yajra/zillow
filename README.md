@@ -20,63 +20,50 @@ Installation
 
 Add `yajra/zillow` as a require dependency in your `composer.json` file:
 
-**Laravel 4**
 ```php
-composer require yajra/zillow:~1.0
-```
-**Laravel 5**
-```php
-composer require yajra/zillow:~2.0
+composer require yajra/zillow:~3.0
 ```
 
-Configuration
+Configuration (Optional on Laravel 5.5)
 -------------
-In your `config/app.php` add `Yajra\Zillow\ServiceProvider` to the end of the providers array
+In your `config/app.php` add `Yajra\Zillow\ZillowServiceProvider` to the end of the providers array
 ```php
-'providers' => array(
+'providers' => [
     'Illuminate\Auth\AuthServiceProvider',
     ...
-    'Yajra\Zillow\ServiceProvider',
-),
+    'Yajra\Zillow\ZillowServiceProvider',
+],
 ```
 
 At the end of `config/app.php` add `Zillow` => `yajra\Zillow\Facade` to the aliases array
 ```php
-'aliases' => array(
+'aliases' => [
     'App'        => 'Illuminate\Support\Facades\App',
     'Artisan'    => 'Illuminate\Support\Facades\Artisan',
     ...
-    'Zillow'    => 'Yajra\Zillow\Facade',
-),
+    'Zillow'    => 'Yajra\Zillow\Facades\Zillow',
+],
 ```
 
-Lastly, publish the config file:
+Lastly, publish the config file (Optional):
 
-**Laravel 4**
-```php
-$ php artisan config:publish yajra/zillow
-```
-**Laravel 5**
 ```php
 $ php artisan vendor:publish
 ```
 
-Then set your [Zillow Web Services ID (ZWSID)](http://www.zillow.com/webservice/Registration.htm) by updating the `zws-id` value in
+Then set your [Zillow Web Services ID (ZWSID)](http://www.zillow.com/webservice/Registration.htm) by updating the `zws-id` value in `config/zillow.php`.
 
-**Laravel 4**
-`app/config/packages/yajra/zillow/config.php`
+You can also set `ZWSID` key on your env file and skip the publishing of config.
 
-**Laravel 5**
-`config/zillow.php`
+Usage
+------------
 
-###Usage
------
 Make requests with a specific API call method:
 
 ```php
 $params = [
-	'address' => '5400 Tujunga Ave',
-	'citystatezip' => 'North Hollywood, CA 91601'
+    'address' => '5400 Tujunga Ave',
+    'citystatezip' => 'North Hollywood, CA 91601'
 ];
 // Run GetSearchResults
 $response = Zillow::getSearchResults($params);
