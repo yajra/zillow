@@ -71,16 +71,23 @@ $response = Zillow::getSearchResults($params);
 
 Any Zillow API call will work. Valid callbacks are:
 
-- getZestimate
-- getSearchResults
-- getChart
-- getComps
-- getDeepComps
-- getDeepSearchResults
-- getUpdatedPropertyDetails
+### Home Valuation API
+- [getZestimate](https://www.zillow.com/howto/api/GetZestimate.htm)
+- [getSearchResults](https://www.zillow.com/howto/api/GetSearchResults.htm)
+- [getChart](https://www.zillow.com/howto/api/GetChart.htm)
+- [getComps](https://www.zillow.com/howto/api/GetComps.htm)
+
+### Property Details API
+- [getDeepSearchResults](https://www.zillow.com/howto/api/GetDeepSearchResults.htm)
+- [getDeepComps](https://www.zillow.com/howto/api/GetDeepComps.htm)
+- [getUpdatedPropertyDetails](https://www.zillow.com/howto/api/GetUpdatedPropertyDetails.htm)
+
+### Neighborhood Data
+- [getRegionChildren](https://www.zillow.com/howto/api/GetRegionChildren.htm)
+- [getRegionChart](https://www.zillow.com/howto/api/GetRegionChart.htm)
+
+### Other API
 - getDemographics
-- getRegionChildren
-- getRegionChart
 - getRateSummary
 - getMonthlyPayments
 - calculateMonthlyPaymentsAdvanced
@@ -95,7 +102,6 @@ Any Zillow API call will work. Valid callbacks are:
 - calculateFixedVsAdjustableRate
 - calculateInterstOnlyVsTraditional
 - calculateHELOC
-
 
 License
 -------
