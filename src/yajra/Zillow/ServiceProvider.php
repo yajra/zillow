@@ -1,8 +1,9 @@
-<?php namespace yajra\Zillow;
+<?php
 
-use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
-use yajra\Zillow\ZillowClient;
+namespace yajra\Zillow;
+
 use Config;
+use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 class ServiceProvider extends IlluminateServiceProvider
 {
@@ -47,6 +48,6 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function provides()
     {
-        return array('zillow');
+        return ['zillow'];
     }
 }
