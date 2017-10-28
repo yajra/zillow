@@ -1,12 +1,13 @@
-<?php namespace yajra\Zillow;
+<?php
 
-use GuzzleHttp\Client as GuzzleClient;
+namespace yajra\Zillow;
+
 use Goutte\Client as GoutteClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
-use yajra\Zillow\ZillowException;
 
 /**
- * Client
+ * Client.
  *
  * @author Arjay Angeles <aqangeles@gmail.com>
  */
@@ -82,7 +83,7 @@ class ZillowClient
     ];
 
     /**
-     * Initiate the class
+     * Initiate the class.
      * @param string $ZWSID
      * @return object
      */
@@ -93,7 +94,7 @@ class ZillowClient
 
     /**
      * Set client
-     * return GuzzleClient
+     * return GuzzleClient.
      */
     public function setClient(GuzzleClientInterface $client)
     {
@@ -104,12 +105,12 @@ class ZillowClient
 
     /**
      * get GuzzleClient, create if it's null
-     * return GuzzleClient
+     * return GuzzleClient.
      */
     public function getClient()
     {
-        if (!$this->client) {
-            $this->client = new GuzzleClient(array('defaults' => array('allow_redirects' => true, 'cookies' => true)));
+        if (! $this->client) {
+            $this->client = new GuzzleClient(['defaults' => ['allow_redirects' => true, 'cookies' => true]]);
         }
 
         return $this->client;
@@ -120,7 +121,7 @@ class ZillowClient
      */
     public function setZWSID($id)
     {
-        return ($this->ZWSID = $id);
+        return $this->ZWSID = $id;
     }
 
     /**
@@ -132,7 +133,7 @@ class ZillowClient
     }
 
     /**
-     * Check if the last request was successful
+     * Check if the last request was successful.
      * @return bool
      */
     public function isSuccessful()
@@ -141,7 +142,7 @@ class ZillowClient
     }
 
     /**
-     * return the status code from the last call
+     * return the status code from the last call.
      * @return int
      */
     public function getStatusCode()
@@ -150,7 +151,7 @@ class ZillowClient
     }
 
     /**
-     * return the status message from the last call
+     * return the status message from the last call.
      * @return string
      */
     public function getStatusMessage()
@@ -159,7 +160,7 @@ class ZillowClient
     }
 
     /**
-     * return the actual response array from the last call
+     * return the actual response array from the last call.
      * @return array
      */
     public function getResponse()
@@ -168,7 +169,7 @@ class ZillowClient
     }
 
     /**
-     * return the results array from the GetSearchResults call
+     * return the results array from the GetSearchResults call.
      * @return array
      */
     public function getResults()
@@ -178,7 +179,7 @@ class ZillowClient
 
     /**
      * magic method to invoke the correct API call
-     * if the passed name is within the valid callbacks
+     * if the passed name is within the valid callbacks.
      * @param string $name
      * @param array $arguments
      * @return array
@@ -193,7 +194,7 @@ class ZillowClient
     /**
      * Since zillow does not provide the ability to grab the photos
      * of the properties through the API this little method will scan
-     * the property url and grab all the images for that property
+     * the property url and grab all the images for that property.
      * @param string $uri
      * @return array
      */
@@ -217,7 +218,7 @@ class ZillowClient
      * see @GetPhotos
      * Works the same way but instead passing a uri
      * you can pass a zpid and it will perform a request to grab the uri
-     * based on the id
+     * based on the id.
      * @see GetPhotos
      * @param int @zpid
      * @return array
@@ -238,7 +239,7 @@ class ZillowClient
     }
 
     /**
-     * set the statis code and message of the api call
+     * set the statis code and message of the api call.
      * @param int $code
      * @param string $message
      * @return void
@@ -250,7 +251,7 @@ class ZillowClient
     }
 
     /**
-     * Perform the actual request to the zillow api endpoint
+     * Perform the actual request to the zillow api endpoint.
      * @param string $name
      * @param array $params
      * @return array
@@ -258,8 +259,8 @@ class ZillowClient
     protected function doRequest($call, array $params)
     {
         // Validate
-        if (!$this->getZWSID()) {
-            throw new ZillowException("You must submit the ZWSID");
+        if (! $this->getZWSID()) {
+            throw new ZillowException('You must submit the ZWSID');
         }
 
         // Run the call
@@ -273,7 +274,7 @@ class ZillowClient
 
     /**
      * Parse the reponse into a formatted array
-     * also set the status code and status message
+     * also set the status code and status message.
      * @param object $response
      * @return array
      */
@@ -282,8 +283,9 @@ class ZillowClient
         // Init
         $this->response = json_decode(json_encode($response), true);
 
-        if (!$this->response['message']) {
+        if (! $this->response['message']) {
             $this->setStatus(999, 'XML WAS NOT FOUND');
+
             return;
         }
 

@@ -1,8 +1,12 @@
-<?php namespace yajra\Zillow;
+<?php
+
+namespace yajra\Zillow;
 
 use Exception;
 
 /**
- * Default exception class
+ * Default exception class.
  */
-class ZillowException extends Exception {}
+class ZillowException extends Exception
+{
+}

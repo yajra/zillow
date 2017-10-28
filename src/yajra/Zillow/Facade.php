@@ -1,14 +1,18 @@
-<?php namespace yajra\Zillow;
+<?php
+
+namespace yajra\Zillow;
 
 use Illuminate\Support\Facades\Facade as IlluminateFacade;
 
-class Facade extends IlluminateFacade {
-
+class Facade extends IlluminateFacade
+{
     /**
      * Get the registered name of the component.
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'zillow'; }
-
+    protected static function getFacadeAccessor()
+    {
+        return 'zillow';
+    }
 }

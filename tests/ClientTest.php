@@ -11,17 +11,15 @@
 
 namespace Zillow\Tests;
 
-use yajra\Zillow\ZillowClient;
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Message\Response as GuzzleResponse;
 use GuzzleHttp\Stream\Stream;
-use GuzzleHttp\Subscriber\History;
+use yajra\Zillow\ZillowClient;
 use GuzzleHttp\Subscriber\Mock;
-use GuzzleHttp\Post\PostFile;
+use GuzzleHttp\Subscriber\History;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Message\Response as GuzzleResponse;
 
 /**
- * Goutte Client Test
+ * Goutte Client Test.
  *
  * @author Arjay Angeles <aqangeles@gmail.com>
  */
@@ -33,9 +31,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     protected function getGuzzle()
     {
         $this->history = new History();
-        $this->mock = new Mock();
-        $this->mock->addResponse(new GuzzleResponse(200, array(), Stream::factory('<html><body><p>Hi</p></body></html>')));
-        $guzzle = new GuzzleClient(array('redirect.disable' => true, 'base_url' => ''));
+        $this->mock    = new Mock();
+        $this->mock->addResponse(new GuzzleResponse(200, [], Stream::factory('<html><body><p>Hi</p></body></html>')));
+        $guzzle = new GuzzleClient(['redirect.disable' => true, 'base_url' => '']);
         $guzzle->getEmitter()->attach($this->mock);
         $guzzle->getEmitter()->attach($this->history);
 
@@ -58,7 +56,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testZWSID()
     {
-    	$client = new ZillowClient('xxxxx');
+        $client = new ZillowClient('xxxxx');
         $this->assertSame('xxxxx', $client->getZWSID());
     }
 }
